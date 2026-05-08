@@ -1,128 +1,140 @@
 import { useState, useEffect } from "react";
 
+const navItems = [
+  { href: "#home",     label: "Home",     id: "home"     },
+  { href: "#about",    label: "About",    id: "about"    },
+  { href: "#projects", label: "Projects", id: "projects" },
+  { href: "#skills",   label: "Skills",   id: "skills"   },
+  { href: "#contact",  label: "Contact",  id: "contact"  },
+];
+
 function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("home");
+  const [isOpen, setIsOpen]           = useState(false);
+  const [activeSection, setActive]    = useState("home");
+  const [scrolled, setScrolled]       = useState(false);
 
-  const navItems = [
-    { href: "#home", label: "HOME", id: "home" },
-    { href: "#about", label: "ABOUT ME", id: "about" },
-    { href: "#education", label: "EDUCATION", id: "education" },
-    { href: "#projects", label: "PROJECTS", id: "projects" },
-    { href: "#skills", label: "SKILLS", id: "skills" },
-    { href: "#contact", label: "CONTACT", id: "contact" },
-  ];
-
-  // Highlight based on scroll position
   useEffect(() => {
-    const sectionIds = navItems.map((item) => item.id);
-
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 80; // offset for navbar height
-
-      let current = "home";
-      sectionIds.forEach((id) => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      const pos = window.scrollY + 100;
+      let cur = "home";
+      navItems.forEach(({ id }) => {
         const el = document.getElementById(id);
-        if (el) {
-          const top = el.offsetTop;
-          if (scrollPos >= top) {
-            current = id;
-          }
-        }
+        if (el && pos >= el.offsetTop) cur = id;
       });
-
-      setActiveSection(current);
+      setActive(cur);
     };
 
-    handleScroll(); // run once on load
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const sidebarLinkClasses = (id) =>
-    `flex items-center gap-2 text-base font-nav ${
-      activeSection === id
-        ? "text-sky-400 font-medium"
-        : "text-slate-300"
-    }`;
 
   return (
     <>
-      {/* Top navbar */}
-      <nav className="fixed top-0 inset-x-0 z-30 bg-slate-950/80 backdrop-blur border-b border-slate-800 flex items-center justify-between h-16 px-4">
-        {/* Name */}
+      {/* ── Floating pill navbar ── */}
+      <nav
+        className={`fixed top-4 left-1/2 -translate-x-1/2 z-30
+          flex items-center gap-1 px-3 py-2 rounded-full
+          transition-all duration-300
+          ${scrolled
+            ? "bg-slate-950/90 backdrop-blur-2xl border border-slate-700/70 shadow-2xl shadow-black/40"
+            : "bg-slate-950/50 backdrop-blur-xl border border-slate-800/50"
+          }`}
+      >
+        {/* Logo */}
         <a
           href="#home"
-          className="font-semibold text-lg sm:text-xl tracking-tight"
+          className="font-semibold text-sm text-slate-100 px-3 py-1 rounded-full hover:bg-slate-800/60 transition-colors"
         >
           SM
         </a>
 
-        {/* Hamburger */}
+        <span className="hidden md:block w-px h-4 bg-slate-700/80 mx-1" />
+
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-0.5">
+          {navItems.map(({ href, label, id }) => {
+            const active = activeSection === id;
+            return (
+              <a
+                key={id}
+                href={href}
+                className={`relative px-3.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200
+                  ${active
+                    ? "text-sky-400 bg-sky-500/10"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                  }`}
+              >
+                {label}
+                {active && (
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-sky-400" />
+                )}
+              </a>
+            );
+          })}
+        </div>
+
+        {/* Mobile hamburger */}
         <button
           type="button"
-          className="inline-flex flex-col justify-center items-center w-10 h-10 text-slate-200 md:ml-3"
+          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[4px] ml-1 rounded-full hover:bg-slate-800/60 transition-colors"
           onClick={() => setIsOpen(true)}
-          aria-label="Open navigation menu"
+          aria-label="Open navigation"
         >
-          <span className="w-5 h-[2px] bg-slate-200 mb-[3px]" />
-          <span className="w-5 h-[2px] bg-slate-200 mb-[3px]" />
-          <span className="w-5 h-[2px] bg-slate-200" />
+          <span className="w-4 h-[1.5px] bg-slate-300" />
+          <span className="w-4 h-[1.5px] bg-slate-300" />
+          <span className="w-4 h-[1.5px] bg-slate-300" />
         </button>
       </nav>
 
-      {/* Overlay */}
+      {/* ── Mobile overlay ── */}
       <div
-        className={`fixed inset-0 z-30 bg-black/40 transition-opacity ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-30 bg-black/60 backdrop-blur-sm transition-opacity duration-300
+          ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
         onClick={() => setIsOpen(false)}
       />
 
-      {/* Sidebar */}
+      {/* ── Mobile sidebar ── */}
       <aside
-        className={`fixed top-0 right-0 z-40 h-full w-64 bg-slate-950 border-l border-slate-800 p-6 transform transition-transform
-        ${
-          isOpen
-            ? "translate-x-0 duration-300 ease-in"
-            : "translate-x-full duration-150 ease-out"
-        }`}
+        className={`fixed top-0 right-0 z-40 h-full w-64
+          bg-slate-950/95 backdrop-blur-2xl border-l border-slate-800/80
+          p-6 flex flex-col gap-6
+          transform transition-transform
+          ${isOpen ? "translate-x-0 duration-300 ease-out" : "translate-x-full duration-200 ease-in"}`}
       >
-        {/* inner content animating up */}
         <div
-          className={`flex flex-col gap-6 transform transition-all duration-300
-          ${isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+          className={`flex flex-col gap-6 transition-all duration-300
+            ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
         >
           <div className="flex items-center justify-between">
-            <span className="font-nav font-semibold text-slate-100 text-lg">
-              
-            </span>
+            <span className="text-sm font-semibold text-slate-200 tracking-wide">Navigation</span>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-slate-400 text-xs rounded-full px-2 py-0.5 hover:text-slate-200 hover:border-slate-300 transition"
+              className="w-8 h-8 flex items-center justify-center rounded-full border border-slate-700 text-slate-400 text-xs hover:text-slate-200 hover:border-slate-500 transition-all"
+              aria-label="Close navigation"
             >
               ✕
             </button>
           </div>
 
-          <nav className="flex flex-col gap-3">
-            {navItems.map((item) => {
-              const isActive = activeSection === item.id;
+          <nav className="flex flex-col gap-1">
+            {navItems.map(({ href, label, id }) => {
+              const active = activeSection === id;
               return (
                 <a
-                  key={item.href}
-                  href={item.href}
-                  className={sidebarLinkClasses(item.id)}
+                  key={id}
+                  href={href}
                   onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
+                    ${active
+                      ? "text-sky-400 bg-sky-500/10 border border-sky-500/20"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                    }`}
                 >
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                  )}
-                  {!isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
-                  )}
-                  <span>{item.label}</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${active ? "bg-sky-400" : "bg-slate-600"}`} />
+                  {label}
                 </a>
               );
             })}

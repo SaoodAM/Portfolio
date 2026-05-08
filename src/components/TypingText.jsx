@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
 const phrases = [
-  "I am a Computer Science student at the University of Toronto.",
-  "I am interested in full-stack development, systems, and security.",
-  "I enjoy building real-world projects and solving technical problems.",
+  "I build full-stack applications that solve real problems.",
+  "I design and ship clean, scalable web platforms.",
+  "I focus on performance, usability, and real-world impact.",
 ];
 
 function TypingText() {
