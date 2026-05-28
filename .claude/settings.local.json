@@ -3,7 +3,10 @@
     "allow": [
       "Read(//c/Users/Saood/.claude/skills/ui-ux-pro-max/**)",
       "Bash(python scripts/search.py \"portfolio developer personal site dark premium tech\" --design-system -p \"Saood Portfolio\")",
-      "Bash(python scripts/search.py \"glassmorphism dark neon bento grid animated\" --domain style)"
+      "Bash(python scripts/search.py \"glassmorphism dark neon bento grid animated\" --domain style)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

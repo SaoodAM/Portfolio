@@ -27,7 +27,7 @@ const projects = [
       "Fully responsive dark UI with optimistic cart updates and smooth loading states",
     ],
     tech: ["Next.js 14", "Tailwind CSS", "Shopify Storefront API", "Shopify Admin API", "Supabase", "Stripe", "Resend", "Vercel"],
-    demo: "https://vrglobal-two.vercel.app",
+    demo: "https://vrcomhelp.ca",
     github: null,
     shortDesc: "Production e-commerce store with a Shopify webhook pipeline that automatically fires restock emails when inventory goes positive — HMAC-verified, per-user unsubscribe, full Stripe checkout.",
   },
